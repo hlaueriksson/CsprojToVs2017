@@ -17,6 +17,7 @@ namespace Project2015To2017.Reading
 		private readonly AssemblyInfoReader assemblyInfoReader;
 		private readonly ProjectPropertiesReader projectPropertiesReader;
 		private readonly ILogger logger;
+		private readonly bool force;
 
 		public ProjectReader(ILogger logger = null, ConversionOptions conversionOptions = null)
 		{
@@ -25,6 +26,7 @@ namespace Project2015To2017.Reading
 			this.nuspecReader = new NuSpecReader(this.logger);
 			this.assemblyInfoReader = new AssemblyInfoReader(this.logger);
 			this.projectPropertiesReader = new ProjectPropertiesReader(this.logger);
+			this.force = conversionOptions?.Force ?? false;
 		}
 
 		public Project Read(string projectFilePath)
@@ -70,7 +72,7 @@ namespace Project2015To2017.Reading
 			};
 
 			// get ProjectTypeGuids and check for unsupported types
-			if (UnsupportedProjectTypes.IsUnsupportedProjectType(projectDefinition))
+			if (!force && UnsupportedProjectTypes.IsUnsupportedProjectType(projectDefinition))
 			{
 				this.logger.LogError("This project type is not supported for conversion.");
 				return null;
